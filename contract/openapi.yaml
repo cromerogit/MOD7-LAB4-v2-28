@@ -10,7 +10,7 @@ servers:
   - url: https://example.execute-api.us-east-1.amazonaws.com/test
 paths:
   /clientes/{cliente-id}/cuentas:
-  get:
+    get:
       tags: [Cuentas]
       summary: Consultar cuentas de un cliente
       operationId: listarCuentasCliente
@@ -46,7 +46,7 @@ paths:
             responseTemplates:
               application/json: |
                 {"origen":"MOCK","clienteId":"$util.escapeJavaScript($input.params('cliente-id'))","cuentas":[{"numeroCuenta":"1000000001","tipo":"AHORROS","moneda":"PEN","titular":"Cliente de prueba","saldo":100.0}]}
-  post:
+    post:
       tags: [Cuentas]
       summary: Crear una cuenta simulada
       operationId: crearCuentaCliente
