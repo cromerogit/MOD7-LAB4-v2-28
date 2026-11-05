@@ -10,7 +10,43 @@ servers:
   - url: https://example.execute-api.us-east-1.amazonaws.com/test
 paths:
   /clientes/{cliente-id}/cuentas:
-    post:
+  get:
+      tags: [Cuentas]
+      summary: Consultar cuentas de un cliente
+      operationId: listarCuentasCliente
+      parameters:
+        - name: cliente-id
+          in: path
+          required: true
+          description: Identificador público ficticio de cliente
+          schema:
+            type: string
+            pattern: '^CLI[0-9]{3}$'
+      responses:
+        '200':
+          description: Cuentas del cliente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultaCuentas'
+        '404':
+          description: Cliente no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problema'
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: never
+        responses:
+          default:
+            statusCode: '200'
+            responseTemplates:
+              application/json: |
+                {"origen":"MOCK","clienteId":"$util.escapeJavaScript($input.params('cliente-id'))","cuentas":[{"numeroCuenta":"1000000001","tipo":"AHORROS","moneda":"PEN","titular":"Cliente de prueba","saldo":100.0}]}
+  post:
       tags: [Cuentas]
       summary: Crear una cuenta simulada
       operationId: crearCuentaCliente
@@ -58,42 +94,6 @@ paths:
             responseTemplates:
               application/json: |
                 {"numeroCuenta":"SIMULADO-0001","tipo":"AHORROS","moneda":"PEN","titular":"Cliente (Mock)","saldo":0}
-    get:
-      tags: [Cuentas]
-      summary: Consultar cuentas de un cliente
-      operationId: listarCuentasCliente
-      parameters:
-        - name: cliente-id
-          in: path
-          required: true
-          description: Identificador público ficticio de cliente
-          schema:
-            type: string
-            pattern: '^CLI[0-9]{3}$'
-      responses:
-        '200':
-          description: Cuentas del cliente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConsultaCuentas'
-        '404':
-          description: Cliente no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problema'
-      x-amazon-apigateway-integration:
-        type: mock
-        requestTemplates:
-          application/json: '{"statusCode": 200}'
-        passthroughBehavior: never
-        responses:
-          default:
-            statusCode: '200'
-            responseTemplates:
-              application/json: |
-                {"origen":"MOCK","clienteId":"$util.escapeJavaScript($input.params('cliente-id'))","cuentas":[{"numeroCuenta":"1000000001","tipo":"AHORROS","moneda":"PEN","titular":"Cliente de prueba","saldo":100.0}]}
 components:
   schemas:
     Cuenta:
